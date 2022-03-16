@@ -11,11 +11,13 @@ export const Login = () => {
   const token = sessionStorage.getItem("token");
   const history = useHistory();
 
+  console.log("This is your token", store.token);
   const handleClick = () => {
-    actions.login(email, password).then(() => {
-      history.push("/");
-    });
+    actions.login(email, password);
   };
+
+  if (store.token && store.token != "" && store.token != undefined)
+    history.push("/");
 
   return (
     <div className="text-center mt-5">

@@ -22,6 +22,22 @@ const getState = ({ getStore, getActions, setStore }) => {
         getActions().changeColor(0, "green");
       },
 
+      syncTokenFromSessionStore: () => {
+        const token = sessionStorage.getItem("token");
+        console.log(
+          "Aplication just loaded, syncing the session storage token"
+        );
+        if (token && token != "" && token != undefined)
+          setStore({ token: token });
+      },
+
+      logout: () => {
+        sessionStorage.removeItem("token");
+        console.log("Logout");
+
+        setStore({ token: null });
+      },
+
       login: async (email, password) => {
         const options = {
           method: "POST",
@@ -55,8 +71,14 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
 
       getMessage: () => {
+        const store = getStore();
+        const options = {
+          headers: {
+            Authorization: "Bearer " + store.token,
+          },
+        };
         // fetching data from the backend
-        fetch(process.env.BACKEND_URL + "/api/hello")
+        fetch(process.env.BACKEND_URL + "/api/hello", options)
           .then((resp) => resp.json())
           .then((data) => setStore({ message: data.message }))
           .catch((error) =>
